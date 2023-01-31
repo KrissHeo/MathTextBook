@@ -86,11 +86,11 @@
 ([xshift=\ChapTitleWidth, yshift=-\TitleSkip]OddO.center)--([xshift=-\ChapNumboxWidth-30mm, yshift=-\TitleSkip]OddO.center);
 }
 \newcommand{\OddAddPageNum}{%%%% 홀수면주
-\node[anchor=north east, overlay] at ([xshift=1mm, yshift=-6.5mm]memoir marginpar area.south east) (OddPageNum) {\fontsize{12}{12} \selectfont \myDinreg \thepage};
+\node[anchor=north east, overlay] at ([xshift=1mm, yshift=-6.5mm]memoir marginpar area.south east) (OddPageNum) {\fontsize{12}{12}  \thepage};
 %\node[anchor=north east, overlay] at ([xshift=-10mm, yshift=-6.5mm]memoir marginpar area.south east) () {\color{black!70}\fontsize{9}{9} \selectfont \myGujarati{} orbi.kr};
 }
 \newcommand{\EvenAddPageNum}{%%%% 짝수면주
-\node[anchor=north west] at ([xshift=-2mm, yshift=-6.5mm]memoir marginpar area.south west) (EvenPageNum)  {\fontsize{12}{12} \selectfont \myDinreg \thepage};
+\node[anchor=north west] at ([xshift=-2mm, yshift=-6.5mm]memoir marginpar area.south west) (EvenPageNum)  {\fontsize{12}{12} \thepage};
 }
 \newcommand{\EvenDrawCommand}{%
 \filldraw[fill=cyan] (EvenO.center) %%% Draw ChapNumbox 
@@ -110,7 +110,7 @@
   \node[anchor=north west, overlay] (ChapExplainText) at
   (ChapTitleText.south west) {\sffamily{\GetValue{ChapExplain}}};
   \node[anchor=east, overlay] at ([xshift=-.1\ChapNumboxWidth,yshift=-.5\ChapHeight]EvenO.center)
-  {\fontsize{54.829}{54.829}\selectfont{}\sffamily\myDinbol{}%
+  {\fontsize{54.829}{54.829}\selectfont{}\sffamily%
   {\color{cyan!27}\ifnum\value{chapter}<10 0\fi}{\color{white}\thechapter}};
 }
 \newcommand{\OddDrawCommand}{%
@@ -131,7 +131,7 @@
   \node[anchor=north west, overlay] (ChapExplainText) at
   (ChapTitleText.south west) {\sffamily{\GetValue{ChapExplain}}};
   \node[anchor=east, overlay] at ([xshift=-.1\ChapNumboxWidth,yshift=-.5\ChapHeight]OddO.center)
-  {\fontsize{54.829}{54.829}\selectfont{}\sffamily\myDinbol{}{{\color{cyan!27}\ifnum\value{chapter}<10 0\fi}}{\color{white}\thechapter}};  
+  {\fontsize{54.829}{54.829}\selectfont{}\sffamily{{\color{cyan!27}\ifnum\value{chapter}<10 0\fi}}{\color{white}\thechapter}};  
 }
 \newcommand{\myHOF}[1]{\myCentury{}{\color{cyan!50}0}\color{cyan}#1}
 
@@ -437,7 +437,7 @@ width=\marginparwidth,
 \newcommand{\myMediumDotum}{\hangulfontspec[Ligatures=TeX]{Yoon 윤고딕 750}\fontspec[Ligatures=TeX]{Yoon 윤고딕 750}}
 \newcommand{\myDinbol}{\hangulfontspec[Ligatures=TeX]{Dinbol}\fontspec[Ligatures=TeX,LetterSpace=-5]{Dinbol}}
 \newcommand{\myDinmed}{\hangulfontspec[Ligatures=TeX]{Dinmed}\fontspec[Ligatures=TeX,LetterSpace=-5]{Dinmed}}
-\newcommand{\myDinreg}{\hangulfontspec[Ligatures=TeX]{Dinmed}\fontspec[Ligatures=TeX,LetterSpace=-5]{Dinreg}}
+\newcommand{}{\hangulfontspec[Ligatures=TeX]{Dinmed}\fontspec[Ligatures=TeX,LetterSpace=-5]{Dinreg}}
 \newcommand{\myGujarati}{\hangulfontspec[Ligatures=TeX]{Gujarati Sangam MN}\fontspec[Ligatures=TeX,LetterSpace=-5]{Gujarati Sangam MN}}
 \newcommand{\myMediumYoonGothic}{\hangulfontspec[Ligatures=TeX]{Yoon 윤고딕 760}\fontspec[Ligatures=TeX]{Yoon 윤고딕 760}}
 \fi
