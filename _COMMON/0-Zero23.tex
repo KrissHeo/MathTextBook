@@ -1,0 +1,70 @@
+ 
+\mychapter{수열}{}
+\section{수열의 정의}
+\subsection{문장으로 정의}
+차례로 나열된 수의 열을 \term{수열}{}이라 하고, 나열된 각각의 수를 그 수열의 \term[수열]{항}{2}이라고 합니다. 일반적으로 수열을 다음과 같이 나타냅니다.
+\begin{align*}a_1,\:a_2,\:a_3 ,\: \cdots,\: a_n,\:\cdots\end{align*}
+이때 앞에서부터 차례로 제$1$항, 제$2$항, 제$3$항, $\cdots$, 제$n$항, $\cdots$이라고 합니다.
+\subsection{함수로 정의}
+$\mathbb N$의 원소 $n$과 수열의 항 $a_n$을 대응시키면 이 대응은 $\mathbb N$에서 $\mathbb R$로의 함수로 생각할 수 있습니다. 즉, 다음과 같습니다.
+\begin{align*} f : \mathbb N \longrightarrow \mathbb R, \: f(n)=a_n\end{align*}
+\subsection{일반항}
+함수식 $f(n)$을 $n$에 대한 식으로 나타내면, 그 식의 $n$에 적절한 자연수를 대입하여 수열의 각 항을 구할 수 있습니다. 그런데 $f(n)=a_n$이므로, 제$n$항 $a_n$이 수열의 각 항을 일반적으로 나타내고 있음을 알 수 있습니다. 이러한 의미에서 제$n$항 $a_n$을 이 수열의 \term{일반항}{}이라고 하며, 일반항이 $a_n$인 수열을 간단히 $\left\{ a_n \right\} $과 같이 나타냅니다.
+\section{등차수열과 등비수열}
+\subsection{정의, 관계식, 일반항}
+첫째항부터 차례로 일정한 수를 더하여 만든 수열을 \term{등차수열}{}이라 하고, 더하는 일정한 수를 \term{공차}{}라고 합니다. 공차가 $d$인 등차수열 $\left\{ a_n \right\} $에서 $a_n$에 공차 $d$를 더하면 $a_{n+1}$이 되므로 $a_{n+1} = a_n + d$가 성립합니다. 이를 이용하여 등차수열의 일반항을 구하면 $a_n = a + \left( n-1 \right) d$입니다.
+
+첫째항부터 차례로 일정한 수를 곱하여 만든 수열을 \term{등비수열}{}이라 하고, 곱하는 일정한 수를 \term{공비}{}라고 합니다. 공비가 $r$인 등비수열 $\left\{ a_n \right\} $에서 $a_n$에 공비 $r$를 곱하면 $a_{n+1}$이 되므로 $a_{n+1} = a_nr$가 성립합니다. 이를 이용하여 등비수열의 일반항을 구하면 $a_n = ar^{n-1}$입니다.
+\clearpage
+\subsection{중항, 산술평균, 기하평균}
+세 수 $a$, $b$, $c$가 이 순서대로 등차수열을 이룰 때, $2b=a+c$가 성립하며, $b$를 $a$와 $c$의 \term{등차중항}{}이라고 합니다. 세 수 $a$, $b$, $c$가 이 순서대로 등비수열을 이룰 때, $b^2 = ac$가 성립하며, $b$를 $a$와 $c$의 \term{등비중항}{}이라고 합니다.
+
+등차중항 $\dfrac{a+c}{2}$는 $a$와 $c$의 \term{산술평균}{}이라고 하고, 두 등비중항 $\sqrt{ac}$, $-\sqrt{ac}$중에서 양수인 것을 $a$와 $c$의 \term{기하평균}{}이라고 합니다. $a$와 $c$가 모두 양수이면 산술평균과 기하평균에 대하여 다음이 항상 성립합니다. (단, 등호는 $a=c$일 때에만 성립) \begin{align*} \dfrac{a+c}{2} \ge \sqrt{ac}\end{align*}
+
+\section{여러 가지 수열의 합}
+\subsection{$\sum$의 정의}
+수열 $\left\{ a_n \right\} $의 제$1$항부터 제$n$항까지의 \term[수열]{합}{2}을 $\sum_{k=1}^{n}a_k$라 표기합니다. 이는 $a_k$의 $k$에 $1$, $2$, $\cdots$, $n$을 차례로 대입하여 얻은 항들의 합을 의미합니다.
+
+\subsection{$\sum$의 성질}
+$\sum$는 합으로부터 정의되었으므로 다음과 같은 성질을 갖습니다.
+\begin{thmbox}
+    \begin{enumerate}[label=\onum*]
+        \item $\sum_{k=1}^{n}\left( a_k + b_k\right) = \sum_{k=1}^{n}a_k + \sum_{k=1}^{n}b_k$
+        \item $\sum_{k=1}^{n}\left( a_k - b_k\right) = \sum_{k=1}^{n}a_k - \sum_{k=1}^{n}b_k$
+        \item $\sum_{k=1}^{n}ca_k = c\sum_
+        {k=1}^{n}a_k$ (단, $c$는 상수)
+        \item $\sum_{k=1}^{n}c = cn $(단, $c$는 상수)
+    \end{enumerate}    
+\end{thmbox}
+\clearpage
+\subsection{자연수의 거듭제곱의 합}
+자연수의 거듭제곱의 합을 구하면 다음과 같습니다(증명 생략).
+\begin{thmbox}
+    \begin{enumerate}[label=\onum*]
+        \item $\sum_{k=1}^{n}k = \dfrac{n\left( n+1 \right) }{2}$
+    
+        \item $\sum_{k=1}^{n}k^2 = \dfrac{n\left( n+1 \right)(2n+1) }{6}$ 
+        \item $\sum_{k=1}^{n}k^3 = \left\{ \dfrac{n\left( n+1 \right) }{2} \right\}^2 $
+    \end{enumerate}    
+\end{thmbox}
+
+\subsection{등차수열과 등비수열의 합}
+등차수열 $\left\{ a_n \right\} $의 합 $\sum_{k=1}^{n}a_n$과 등비수열 $\left\{ b_n \right\} $의 합 $\sum_{k=1}^{n}b_n$은 각각 다음과 같습니다.
+ \begin{align*}
+    \sum_{k=1}^{n}a_n &= \dfrac{n\left( a_1 +a_n \right) }{2}
+    = \dfrac{n\left( 2a_1+\left( n-1 \right)d  \right) }{2}\\ 
+    \sum_{k=1}^{n}b_n &
+    \begin{cases}
+    = \dfrac{b_1\left( r^n -1 \right) }{r-1} = \dfrac{b_1\left( 1-r^n \right) }{1-r} & \text{(단,\:$r \ne 1$)}\\
+    = nb_1 & \text{(단,\:$r  = 1$)}
+    \end{cases}
+ \end{align*}
+\section{수학적귀납법}
+일반적으로 명제 $p\left( n \right) $이 $n\ge m$ ($m$은 $1$ 이상의 자연수)인 모든 자연수 $n$에 대하여 성립함을 증명하려면 다음의 두 가지를 보이면 됩니다. 
+\begin{thmbox}
+\begin{enumerate}[label={\onum*}]
+    \item $n=m$일 때 $p\left( n \right) $이 성립한다.
+    \item $k\ge m$인 $k$에 대하여 $n=k$일 때 명제 $p\left( n \right) $이 성립한다고 가정하면, $n=k+1$일 때에도 명제 $p\left( n \right) $이 성립한다.
+\end{enumerate}
+\end{thmbox}
+이렇게 증명하는 방법을 \term{수학적귀납법}{}이라고 합니다. 

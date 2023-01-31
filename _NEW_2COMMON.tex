@@ -1,0 +1,182 @@
+%!TEX program=lualatex
+\documentclass[finemath,svgnames,twoside,chapter,no-math]{oblivoir}
+    %\usepackage{processdata,ikpscon,indentfirst,makeidx} 
+    \usepackage[kopub,print]{OVERTHECON}
+    
+    \usepackage{intothemath,memtikzpagenodes,indentfirst,makeidx,kswrapfig} 
+    \usepackage{rotating}
+    \usepackage{multicol}
+      \usepackage[level=part]{obchaptertoc}
+      \chaptertocmaxlevel{section} \renewcommand\chaptertocfont{\normalfont\normalsize\selectfont} \renewcommand\printparttitle[1]{#1\par\vspace{40pt}\chaptertoc}
+       % \TOCFormatsamsas{subsection}{section}{dotsep,presnum}
+
+  %%
+
+    \newcommand{\nosol}{해설없음}
+    %\usepackage{enumitem}
+    %\usepackage{dhucs-enumitem}
+    %\setlist{  
+    %  listparindent=\parindent,     
+    %  parsep=0pt,   
+    %}         
+                  \renewcommand{\thefootnote}{\:\color{cyan}(\arabic{footnote})}
+    \usepackage{newbox}     
+           \usepackage{slashbox}
+    \trimLmarks
+    \newcommand\answerTableNum[1]{%
+    \cellcolor{gray!20}%
+    \textbf{\color{cyan!100}#1}%
+    }
+    
+    \newcommand\answerTableTitle[1]{%
+    \cellcolor{black!60}%
+    \textbf{\color{white}\LARGE#1}%
+    }
+
+\makeatletter
+\patchcmd
+	\tabu@startpboxmeasure
+	{\bgroup\begin{varwidth}}%
+	{\bgroup
+	 \iftabu@spread\color@begingroup\fi\begin{varwidth}}%
+	{}{}
+\def\@tabarray{\m@th\def\tabu@currentgrouptype
+    {\currentgrouptype}\@ifnextchar[\@array{\@array[c]}}
+%
+%%% \pdfelapsedtime bug 2019-12-15
+\patchcmd
+	\tabu@message@etime
+	{\the\pdfelapsedtime}%
+	{\pdfelapsedtime}%
+	{}{}
+%
+%
+
+
+\makeatother
+%\renewcommand\booktitlehead{}
+\renewcommand\hparttitlehead{}
+\renewcommand\hchaptertitlehead{\parttitle\thepart.\thechapter)}
+\newcommand{\parttitle}{}
+% -----------------------------
+
+
+%%%%%%%%%%%%%%%%%%%%
+\SetValue{conpicsize}{0.15}
+\SetValue{solpicsize}{0.125}
+\SetValue{picsize}{0.125}
+\SetValue{Cansu}{2}
+\gdef\mytmplist{}
+\foreach \i in {1,...,\pgfkeysvalueof{Cansu}}%
+    {%
+        \xdef\mytmplist{\mytmplist ../}%
+    }%
+\xdef\mytmplist{\mytmplist Problems/DBs/}
+\SetValue{problemPath}{\mytmplist}
+\newcommand{\mygachapter}{\chapter}
+
+
+\newenvironment{exercise}
+{%before
+\refstepcounter{exercise}%
+\ifthenelse{\equal{\GetValue{type}}{solution}}
+  {%true
+  \ifthenelse{\equal{\GetValue{HOFMode}}{on}}
+    {%true
+    }{%false
+    \noindent{\Huge\myCentury\ifnum\value{exercise}<10{\color{cyan!50}0}\fi\color{cyan}\arabic{exercise}}\enspace
+    }%
+  }{%false
+  \ifthenelse{\equal{\GetValue{HOFMode}}{on}}
+    {%true
+    }{%false
+    \noindent{\Huge\myCentury\ifnum\value{exercise}<10{\color{cyan!50}0}\fi\color{cyan}\arabic{exercise}}\enspace
+    }%
+  }%
+}{%after
+\par\vskip 2\baselineskip minus 1.5\baselineskip}
+
+
+%%%%%%%%%%%%%%%%%%%%
+\SetValue{conpicsize}{0.15}
+\SetValue{solpicsize}{0.125}
+\SetValue{picsize}{0.125}
+%%%%%%%%%%%%%%%%%%%%
+ \makeindex   
+ 
+ 
+%\titlespacing*{\part}
+%  {0pt}{50pt}{40pt}
+%\titlespacing*{\chapter}
+%  {0pt}{0pt}{20pt}
+\renewcommand\cftbooknumwidth{0.0em}
+\renewcommand\cftpartindent{0.2em}
+\renewcommand\cftpartnumwidth{0.7em}
+\renewcommand\cftchapterindent{1.5em}
+\renewcommand\cftchapternumwidth{7.0em}
+
+\renewcommand{\cftbookfont}{\bfseries\sffamily}
+\renewcommand{\cftpartfont}{\bfseries\sffamily}
+\renewcommand{\cftchapterfont}{\sffamily}
+\renewcommand*{\cftbookpagefont}{\bfseries\sffamily}
+\renewcommand*{\cftpartpagefont}{\bfseries\sffamily}
+\renewcommand*{\cftchapterpagefont}{\sffamily}
+\counterwithin*{chapter}{part}
+\setcounter{tocdepth}{1}
+
+\ChapterTOCFormat{%
+\renewcommand\cftchapterindent{0.0em}
+\renewcommand\cftsectionindent{3.0em}
+\renewcommand\cftchapternumwidth{7.0em}
+\renewcommand\cftsectionnumwidth{7.0em}
+\renewcommand\cftsectionfont{\sffamily\small}
+\renewcommand*{\cftsectionpagefont}{\sffamily}
+}
+%\doparttoc% Prepare minitoc package for part tocs usage
+\begin{document} 
+
+\chapterstyle{my}
+\setsecnumdepth{chapter}
+\SetValue{type}{problem}
+\renewcommand{\thepart}{\arabic{part}}
+\renewcommand{\thebook}{}
+\pagestyle{empty}
+타이틀링페이지(내부표지들어갈자리)
+\newpage
+\pagestyle{overthecon}
+저자정보들어갈자리
+\clearpage
+
+\setsecnumdepth{chapter}\setcounter{chapter}{-1}\renewcommand{\parttitle}{Intro }
+
+\pagestyle{overthecon}
+\input{_COMMON/0-Zero00.tex}
+\newpage \chapterstyle{woPrecis}\SetValue{ChapTitle}{차례}
+
+\tableofcontents*
+
+
+%\begin{comment}
+
+\cleartoverso\setcounter{page}{10}\renewcommand{\parttitle}{Zero }\book[Zero) 용어와 개념]{용어와 개념}
+\cleartorecto\part{Zero 1) 함수 이전의 기본 개념}\cleartoverso
+\input{_COMMON/0-Zero11}
+%\end{document}
+\input{_COMMON/0-Zero12}
+\input{_COMMON/0-Zero13}
+\cleartorecto\part{Zero 2) 함수와 연관된 기본 개념}\cleartoverso
+\input{_COMMON/0-Zero21}
+\input{_COMMON/0-Zero22}
+\input{_COMMON/0-Zero23}
+\input{_COMMON/0-Zero24}
+\cleartorecto\part{Zero 3) 함수 이후의 기본 개념}\cleartoverso
+\input{_COMMON/0-Zero31}
+\input{_COMMON/0-Zero32}
+\input{_COMMON/0-Zero33}
+\input{_COMMON/0-Zero34}
+%\end{document}
+
+\cleartoverso\renewcommand{\parttitle}{Graph }\book[Graph) 함수의 성질과 시각화]{함수의 성질과 시각화}\setcounter{part}{-1}
+\cleartorecto\part{Graph 0) 좌표평면과 그래프 해석의 기초}\cleartoverso
+\input{_COMMON/1-Graph00}
+\end{document}

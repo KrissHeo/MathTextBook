@@ -1,0 +1,69 @@
+
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{dhucs-enumitem}
+\setlist[enumerate]{listparindent=\parindent}
+
+
+\definecolor{mydarkcyan}{cmyk}{1,0,0,0.2} 
+\newtcolorbox[]{tcbselbox}{%
+enhanced,title={\myBoldDotum보기},
+rounded corners,colback={cyan!10!white},
+boxrule=0mm,
+left=5pt,
+attach boxed title to top left={xshift=3mm,yshift*=-3mm},
+boxed title style={size=small,colback=mydarkcyan,colframe=mydarkcyan,rounded corners,}
+%,after={\par\vspace{0.5\baselineskip}\bindent}
+}
+\newtcolorbox[]{tcbjustbox}{%
+rounded corners,colback={cyan!10!white},
+boxrule=0mm,
+left=5pt,breakable,
+after={\par\vspace{0.5\baselineskip}\bindent}
+}
+
+
+\newtcolorbox{tcbremark}[2][]{%
+enhanced,title=#2,fonttitle=\myMediumDotum,
+colframe={cyan!80!white},rounded corners,breakable,
+boxrule=0mm,
+left=5pt,colback={cyan!10!white},halign=justify,
+after={\par\vspace{0.5\baselineskip}\bindent},#1
+}
+
+
+
+\renewenvironment{selection}[1]{\vskip 12pt
+\begin{tcbselbox}%
+%\raggedright%
+\begin{enumerate}[label={{\jaso*}.}]\tightlist\lineskip=8pt\lineskiplimit=8pt%
+}{\end{enumerate}\end{tcbselbox}}
+
+
+\renewenvironment{condition}[2][]{\vskip 12pt
+\begin{tcbjustbox}%
+%\raggedright%
+#1%
+\begin{enumerate}[label={(\gana*)}]\tightlist\lineskip=8pt\lineskiplimit=8pt%
+}{\end{enumerate}\end{tcbjustbox}}
+
+\renewenvironment{justbox}{\vskip 12pt
+\begin{tcbjustbox}%
+\raggedright%
+\lineskip=8pt\lineskiplimit=8pt%
+}{\end{tcbjustbox}}
+
+\renewenvironment{remark}[2][]{\vskip 12pt%
+    \begin{tcbremark}[#1]{#2}%
+    %\iraggedright%
+    \lineskip=8pt\lineskiplimit=8pt%
+}{\end{tcbremark}%
+}
+
+
+
+
+
+\renewcommand{\gndtrue}{\hfill\mbox{\textbf{\color{cyan}(참)}}}
+\renewcommand{\gndfalse}{\hfill\mbox{\textbf{\color{cyan}(거짓)}}}
+%\renewcommand{\myMediumDotum}{\mySDGothic}
+%\renewcommand{\myBoldDotum}{\mySDGothic}

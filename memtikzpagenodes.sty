@@ -1,0 +1,189 @@
+\RequirePackage{tikzpagenodes,calc,xparse,eso-pic}
+% memtikzpagenodes is recalculated tikzpagenodes for memoir class
+% source : https://tex.stackexchange.com/questions/44416/is-memoirs-page-layout-incompatible-with-tikz
+% Use \calculatetrims when you change page geometry
+% use memoir stock          to draw something related with stockpaper
+% just replace 'current page' to 'memoir page'
+% or
+% use memoir page           instead of current page
+% use memoir header area    instead of current page header area
+% use memoir text area      instead of current page text area
+% use memoir marginpar area instead of current page marginpar area
+% use memoir footer area    instead of current page footer area
+
+% (Frg's code and Kriss's additional code goes here)
+\makeatletter
+\newlength\memoirPleftodd \newlength\memoirPrightodd
+\newlength\memoirPlefteven \newlength\memoirPrighteven
+\newlength\memoirPtop \newlength\memoirPbottom
+\newlength\memoirTleftodd \newlength\memoirTrightodd
+\newlength\memoirTlefteven \newlength\memoirTrighteven
+\newlength\memoirTtop \newlength\memoirTbottom
+\newlength\memoirHleftodd \newlength\memoirHrightodd
+\newlength\memoirHlefteven \newlength\memoirHrighteven
+\newlength\memoirHtop \newlength\memoirHbottom
+\newlength\memoirFleftodd \newlength\memoirFrightodd
+\newlength\memoirFlefteven \newlength\memoirFrighteven
+\newlength\memoirFtop \newlength\memoirFbottom
+\newlength\memoirMleftodd \newlength\memoirMrightodd
+\newlength\memoirMlefteven \newlength\memoirMrighteven
+\newlength\memoirMtop \newlength\memoirMbottom
+\def\calculatetrims{
+    \setlength\memoirPbottom{\stockheight-\paperheight-\trimtop}
+    \setlength\memoirPleftodd{\stockwidth-\paperwidth-\trimedge}
+    \setlength\memoirPlefteven{\trimedge}
+    \setlength\memoirPtop{\memoirPbottom+\paperheight}
+    \setlength\memoirPrightodd{\memoirPleftodd+\paperwidth}
+    \setlength\memoirPrighteven{\memoirPlefteven+\paperwidth}
+    \setlength\memoirTbottom{\memoirPbottom+\lowermargin}
+    \setlength\memoirTleftodd{\memoirPleftodd+\spinemargin}
+    \setlength\memoirTlefteven{\memoirPlefteven+\foremargin}
+    \setlength\memoirTtop{\memoirPtop-\uppermargin}
+    \setlength\memoirTrightodd{\memoirPrightodd-\foremargin}
+    \setlength\memoirTrighteven{\memoirPrighteven-\spinemargin}
+    \setlength\memoirHbottom{\memoirTtop+\headsep}
+    \setlength\memoirHleftodd{\memoirTleftodd}
+    \setlength\memoirHlefteven{\memoirTlefteven}
+    \setlength\memoirHtop{\memoirHbottom+\headheight}
+    \setlength\memoirHrightodd{\memoirTrightodd}
+    \setlength\memoirHrighteven{\memoirTrighteven}
+    \setlength\memoirFbottom{\memoirTbottom-\footskip}
+    \setlength\memoirFleftodd{\memoirTleftodd}
+    \setlength\memoirFlefteven{\memoirTlefteven}
+    \setlength\memoirFtop{\memoirFbottom+\headheight}
+    \setlength\memoirFrightodd{\memoirTrightodd}
+    \setlength\memoirFrighteven{\memoirTrighteven}
+    \setlength\memoirMbottom{\memoirTbottom}
+    \setlength\memoirMleftodd{\memoirTrightodd+\marginparsep}
+    \setlength\memoirMlefteven{\memoirTlefteven-\marginparsep-\marginparwidth}
+    \setlength\memoirMtop{\memoirTtop}
+    \setlength\memoirMrightodd{\memoirMleftodd+\marginparwidth}
+    \setlength\memoirMrighteven{\memoirMlefteven+\marginparwidth}}
+
+\expandafter\def\csname pgf@sh@ns@memoir page\endcsname{rectangle}
+\expandafter\def\csname pgf@sh@np@memoir page\endcsname{%
+    \def\southwest{\checkoddpage\pgfqpoint{
+        \ifoddpage\memoirPleftodd\else\memoirPlefteven\fi}{\memoirPbottom}}%
+    \def\northeast{\checkoddpage\pgfqpoint{
+        \ifoddpage\memoirPrightodd\else\memoirPrighteven\fi}{\memoirPtop}}
+}
+\expandafter\def\csname pgf@sh@nt@memoir page\endcsname{{1}{0}{0}{1}{0pt}{0pt}}
+\expandafter\def\csname pgf@sh@pi@memoir page\endcsname{pgfpageorigin}
+
+% (Brent's additional code goes here)
+\expandafter\def\csname pgf@sh@ns@memoir stock\endcsname{rectangle}
+\expandafter\def\csname pgf@sh@np@memoir stock\endcsname{%
+  \def\southwest{\pgfqpoint{0pt}{0pt}}%
+  \def\northeast{\pgfqpoint{\stockwidth}{\stockheight}}%
+}
+\expandafter\def\csname pgf@sh@nt@memoir stock\endcsname{{1}{0}{0}{1}{0pt}{0pt}}
+\expandafter\def\csname pgf@sh@pi@memoir stock\endcsname{pgfpageorigin}
+
+% (Kriss' additional code goes here) (memoir)
+\expandafter\def\csname pgf@sh@ns@memoir text area\endcsname{rectangle}
+\expandafter\def\csname pgf@sh@np@memoir text area\endcsname{%
+    \def\southwest{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirTleftodd\else\memoirTlefteven\fi}{\memoirTbottom}}%
+    \def\northeast{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirTrightodd\else\memoirTrighteven\fi}{\memoirTtop}}
+}
+\expandafter\def\csname pgf@sh@nt@memoir text area\endcsname{{1}{0}{0}{1}{0pt}{0pt}}
+\expandafter\def\csname pgf@sh@pi@memoir text area\endcsname{pgfpageorigin}
+
+\expandafter\def\csname pgf@sh@ns@memoir header area\endcsname{rectangle}
+\expandafter\def\csname pgf@sh@np@memoir header area\endcsname{%
+    \def\southwest{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirHleftodd\else\memoirHlefteven\fi}{\memoirHbottom}}%
+    \def\northeast{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirHrightodd\else\memoirHrighteven\fi}{\memoirHtop}}
+}
+\expandafter\def\csname pgf@sh@nt@memoir header area\endcsname{{1}{0}{0}{1}{0pt}{0pt}}
+\expandafter\def\csname pgf@sh@pi@memoir header area\endcsname{pgfpageorigin}
+
+\expandafter\def\csname pgf@sh@ns@memoir footer area\endcsname{rectangle}
+\expandafter\def\csname pgf@sh@np@memoir footer area\endcsname{%
+    \def\southwest{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirFleftodd\else\memoirFlefteven\fi}{\memoirFbottom}}%
+    \def\northeast{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirFrightodd\else\memoirFrighteven\fi}{\memoirFtop}}
+}
+\expandafter\def\csname pgf@sh@nt@memoir footer area\endcsname{{1}{0}{0}{1}{0pt}{0pt}}
+\expandafter\def\csname pgf@sh@pi@memoir footer area\endcsname{pgfpageorigin}
+
+
+\expandafter\def\csname pgf@sh@ns@memoir marginpar area\endcsname{rectangle}
+\expandafter\def\csname pgf@sh@np@memoir marginpar area\endcsname{%
+    \def\southwest{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirMleftodd\else\memoirMlefteven\fi}{\memoirMbottom}}%
+    \def\northeast{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirMrightodd\else\memoirMrighteven\fi}{\memoirMtop}}
+}
+\expandafter\def\csname pgf@sh@nt@memoir marginpar area\endcsname{{1}{0}{0}{1}{0pt}{0pt}}
+\expandafter\def\csname pgf@sh@pi@memoir marginpar area\endcsname{pgfpageorigin}
+%%%
+\makeatother
+
+% (Kriss' additional code goes here) (memoir page)
+\expandafter\def\csname pgf@sh@ns@memoir page text area\endcsname{rectangle}
+\expandafter\def\csname pgf@sh@np@memoir page text area\endcsname{%
+    \def\southwest{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirTleftodd\else\memoirTlefteven\fi}{\memoirTbottom}}%
+    \def\northeast{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirTrightodd\else\memoirTrighteven\fi}{\memoirTtop}}
+}
+\expandafter\def\csname pgf@sh@nt@memoir page text area\endcsname{{1}{0}{0}{1}{0pt}{0pt}}
+\expandafter\def\csname pgf@sh@pi@memoir page text area\endcsname{pgfpageorigin}
+
+\expandafter\def\csname pgf@sh@ns@memoir page header area\endcsname{rectangle}
+\expandafter\def\csname pgf@sh@np@memoir page header area\endcsname{%
+    \def\southwest{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirHleftodd\else\memoirHlefteven\fi}{\memoirHbottom}}%
+    \def\northeast{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirHrightodd\else\memoirHrighteven\fi}{\memoirHtop}}
+}
+\expandafter\def\csname pgf@sh@nt@memoir page header area\endcsname{{1}{0}{0}{1}{0pt}{0pt}}
+\expandafter\def\csname pgf@sh@pi@memoir page header area\endcsname{pgfpageorigin}
+
+\expandafter\def\csname pgf@sh@ns@memoir page footer area\endcsname{rectangle}
+\expandafter\def\csname pgf@sh@np@memoir page footer area\endcsname{%
+    \def\southwest{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirFleftodd\else\memoirFlefteven\fi}{\memoirFbottom}}%
+    \def\northeast{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirFrightodd\else\memoirFrighteven\fi}{\memoirFtop}}
+}
+\expandafter\def\csname pgf@sh@nt@memoir page footer area\endcsname{{1}{0}{0}{1}{0pt}{0pt}}
+\expandafter\def\csname pgf@sh@pi@memoir page footer area\endcsname{pgfpageorigin}
+
+
+\expandafter\def\csname pgf@sh@ns@memoir page marginpar area\endcsname{rectangle}
+\expandafter\def\csname pgf@sh@np@memoir page marginpar area\endcsname{%
+    \def\southwest{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirMleftodd\else\memoirMlefteven\fi}{\memoirMbottom}}%
+    \def\northeast{\checkoddpage\pgfqpoint{
+      \ifoddpage\memoirMrightodd\else\memoirMrighteven\fi}{\memoirMtop}}
+}
+\expandafter\def\csname pgf@sh@nt@memoir marginpar area\endcsname{{1}{0}{0}{1}{0pt}{0pt}}
+\expandafter\def\csname pgf@sh@pi@memoir marginpar area\endcsname{pgfpageorigin}
+%%%
+\makeatother
+
+% (Hoze's code goes here : Display page layout on every page)
+
+\NewDocumentCommand \DisplayPageLayout { }
+{
+    \calculatetrims
+    \AddToShipoutPictureBG{
+    \begin{tikzpicture}[remember picture, overlay, line width=3pt]
+ \draw[red] (memoir page.south west) rectangle (memoir page.north east);
+ \draw[green] (memoir header area.south west) rectangle (memoir header area.north east);
+ \draw[blue] (memoir text area.south west) rectangle (memoir text area.north east);
+
+ \draw[yellow] (memoir footer area.south west) rectangle (memoir footer area.north east);
+ \draw[violet] (memoir marginpar area.south west) rectangle (memoir marginpar area.north east);
+\end{tikzpicture}
+
+    }
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

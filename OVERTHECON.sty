@@ -1,0 +1,727 @@
+\RequirePackage{kocircnum,lipsum,memtikzpagenodes,ifthen,memory,forloop,pgfkeys}
+\RequirePackage{graphicx,mathtools,tabu,letltxmacro,subfig,tabto,everypage,hhline,calc,color}
+\RequirePackage{ulem,ragged2e,colortbl,verbatim}
+\RequirePackage{tikz,marginnote}
+\RequirePackage[most,breakable,many]{tcolorbox}
+\RequirePackage{mathrsfs,etoolbox,anyfontsize}
+\usetikzlibrary{shadows,positioning}
+
+
+\newif\if@kopub %%% default = kopub, available option = yoon
+\DeclareOption{kopub}{\@kopubtrue}
+\DeclareOption{yoon}{\@kopubfalse}
+\ExecuteOptions{kopub}
+\newif\if@web %%% default = web, available option = print
+\DeclareOption{web}{\@webtrue}
+\DeclareOption{print}{\@webfalse}
+\ExecuteOptions{web}
+\newif\if@concept %%% default = concept, available option = nproblem
+\DeclareOption{concept}{\@concepttrue}
+\DeclareOption{nproblem}{\@conceptfalse}
+\ExecuteOptions{concept}
+\ProcessOptions\relax
+
+
+%%%%%%%%%%% 페이지 레이아웃 세팅 
+%%%%%%%%%%% page layout setting
+
+\if@web
+\setstocksize{297mm}{210mm}\settrimmedsize{\stockheight}{\stockwidth}{*}
+\else
+\setstocksize{303mm}{216mm}\settrimmedsize{297.000000mm}{210mm}{*}\settrims{3mm}{3mm}
+\fi
+\if@concept
+\setmarginnotes{6mm}{40mm}{0mm} %4.454mm   %43.554mm %28.4 18.4 4.9     
+\setulmarginsandblock{30.28mm}{20mm}{*}
+\setlrmarginsandblock{22.026mm}{57.003mm}{*}
+\setheadfoot{10mm}{0mm}
+\setheaderspaces{*}{15mm}{*}
+\else
+\setmarginnotes{0mm}{0mm}{0mm}
+\setulmarginsandblock{32.5mm}{24mm}{*}
+\setlrmarginsandblock{18mm}{*}{0.834}
+\setheadfoot{9.357mm}{14mm}
+\setheaderspaces{*}{9.245mm}{*}
+\fi
+\checkandfixthelayout
+\calculatetrims
+
+
+%%%%%%%%%%%%%%%%%%%% Drawing Function Setting
+\newlength\ChapNumboxWidth  \setlength\ChapNumboxWidth{29.45mm}
+\newlength\ChapTitleWidth \setlength\ChapTitleWidth{\dimexpr\marginparwidth+\marginparsep+\textwidth-\ChapNumboxWidth+1mm\relax}
+\newlength\ChapHeight \setlength\ChapHeight{25.45mm}
+\newlength\TitleSep \setlength\TitleSep{18mm}
+\newlength\TitleSkip \setlength\TitleSkip{.5\ChapHeight}
+\newlength\NWC \setlength\NWC{3mm}
+\newlength\SWC \setlength\SWC{3mm}
+\newlength\NEC \setlength\NEC{3mm}
+\newlength\SEC \setlength\SEC{3mm}
+\newlength\BC \setlength\BC{5mm}
+
+\newlength\xheadout
+\newlength\yheadout
+\setlength\xheadout{3mm}
+\setlength\yheadout{2.76mm}
+\newcommand{\EvenOriginSetting}{%
+\node  (EvenO) at ([xshift=\dimexpr\ChapNumboxWidth-\marginparwidth\relax, yshift=\dimexpr\headsep+\headheight\relax]memoir marginpar area.north east) {};
+}
+\newcommand{\OddOriginSetting}{%
+\node  (OddO)   at ([xshift=\spinemargin+7mm, yshift=\dimexpr\headsep+\headheight\relax]memoir text area.north west) {};
+}
+\newcommand{\EvenDrawHeader}{%%% Draw Evenpage Header line
+\draw[draw=cyan!27, line width=2pt]
+([xshift=\ChapTitleWidth, yshift=-\TitleSkip]EvenO.center)--([xshift=\ChapTitleWidth+30mm, yshift=-\TitleSkip]EvenO.center);
+}
+\newcommand{\EvenDrawPageHeader}{%%% Draw Evenpage Header line
+\draw[draw=cyan!27, line width=2pt]
+([xshift=-\ChapNumboxWidth, yshift=-\TitleSkip]EvenO.center)--([xshift=\ChapTitleWidth+30mm, yshift=-\TitleSkip]EvenO.center);
+}
+\newcommand{\OddDrawHeader}{%%% Draw Oddpage Header line
+\draw[draw=cyan!27, line width=2pt]%% Draw Header line
+([xshift=-\ChapNumboxWidth, yshift=-\TitleSkip]OddO.center)--([xshift=-\ChapNumboxWidth-30mm, yshift=-\TitleSkip]OddO.center);
+}
+\newcommand{\OddDrawPageHeader}{%%% Draw Oddpage Header line
+\draw[draw=cyan!27, line width=2pt]%% Draw Header line
+([xshift=\ChapTitleWidth, yshift=-\TitleSkip]OddO.center)--([xshift=-\ChapNumboxWidth-30mm, yshift=-\TitleSkip]OddO.center);
+}
+\newcommand{\OddAddPageNum}{%%%% 홀수면주
+\node[anchor=north east, overlay] at ([xshift=1mm, yshift=-6.5mm]memoir marginpar area.south east) (OddPageNum) {\fontsize{12}{12} \selectfont \myDinreg \thepage};
+%\node[anchor=north east, overlay] at ([xshift=-10mm, yshift=-6.5mm]memoir marginpar area.south east) () {\color{black!70}\fontsize{9}{9} \selectfont \myGujarati{} orbi.kr};
+}
+\newcommand{\EvenAddPageNum}{%%%% 짝수면주
+\node[anchor=north west] at ([xshift=-2mm, yshift=-6.5mm]memoir marginpar area.south west) (EvenPageNum)  {\fontsize{12}{12} \selectfont \myDinreg \thepage};
+}
+\newcommand{\EvenDrawCommand}{%
+\filldraw[fill=cyan] (EvenO.center) %%% Draw ChapNumbox 
+  [rounded corners,=\NWC, color=cyan, very thick] -- ++(-\ChapNumboxWidth,0)
+  [rounded corners,=\NEC, color=cyan, very thick] -- ++(0,-\ChapHeight)
+  [rounded corners,=\BC, color=cyan, very thick] -- ++(\ChapNumboxWidth,0)
+  [sharp corners, color=cyan, very thick] -- ++(0,\ChapHeight)
+  --cycle;
+  \filldraw[fill=cyan!27] (EvenO.center) %%% Draw ChapTitlebox 
+  [rounded corners,=\BC, color=cyan!27, very thick] -- ++(0,-\ChapHeight)
+  [rounded corners,=\SEC, color=cyan!27, very thick] -- ++(\ChapTitleWidth,0)
+  [rounded corners,=\SWC, color=cyan!27, very thick] -- ++(0, \ChapHeight)
+  [sharp corners, color=cyan!27, very thick] -- ++(-\ChapTitleWidth,0)
+  --cycle;
+  \node[anchor=west, overlay] (ChapTitleText) at
+  ([yshift=-\TitleSkip, xshift=.1\ChapNumboxWidth]EvenO.center){\myBoldDotum{}\Huge{\GetValue{ChapTitle}}};
+  \node[anchor=north west, overlay] (ChapExplainText) at
+  (ChapTitleText.south west) {\sffamily{\GetValue{ChapExplain}}};
+  \node[anchor=east, overlay] at ([xshift=-.1\ChapNumboxWidth,yshift=-.5\ChapHeight]EvenO.center)
+  {\fontsize{54.829}{54.829}\selectfont{}\sffamily\myDinbol{}%
+  {\color{cyan!27}\ifnum\value{chapter}<10 0\fi}{\color{white}\thechapter}};
+}
+\newcommand{\OddDrawCommand}{%
+\filldraw[fill=cyan] (OddO.center) %%% Draw ChapNumbox 
+  [rounded corners,=\NWC, color=cyan, very thick] -- ++(-\ChapNumboxWidth,0)
+  [rounded corners,=\NEC, color=cyan, very thick] -- ++(0,-\ChapHeight)
+  [rounded corners,=\BC, color=cyan, very thick] -- ++(\ChapNumboxWidth,0)
+  [sharp corners, color=cyan, very thick] -- ++(0,\ChapHeight)
+  --cycle;
+  \filldraw[fill=cyan!27] (OddO.center) %%% Draw ChapTitlebox 
+  [rounded corners,=\BC, color=cyan!27, very thick] -- ++(0,-\ChapHeight)
+  [rounded corners,=\SEC, color=cyan!27, very thick] -- ++(\ChapTitleWidth,0)
+  [rounded corners,=\SWC, color=cyan!27, very thick] -- ++(0, \ChapHeight)
+  [sharp corners, color=cyan!27, very thick] -- ++(-\ChapTitleWidth,0)
+  --cycle;
+  \node[anchor=west, overlay] (ChapTitleText) at
+  ([yshift=-\TitleSkip, xshift=.1\ChapNumboxWidth]OddO.center){\myBoldDotum{}\Huge{\GetValue{ChapTitle}}};
+  \node[anchor=north west, overlay] (ChapExplainText) at
+  (ChapTitleText.south west) {\sffamily{\GetValue{ChapExplain}}};
+  \node[anchor=east, overlay] at ([xshift=-.1\ChapNumboxWidth,yshift=-.5\ChapHeight]OddO.center)
+  {\fontsize{54.829}{54.829}\selectfont{}\sffamily\myDinbol{}{{\color{cyan!27}\ifnum\value{chapter}<10 0\fi}}{\color{white}\thechapter}};  
+}
+\newcommand{\myHOF}[1]{\myCentury{}{\color{cyan!50}0}\color{cyan}#1}
+
+
+
+\newcommand{\ChapterTitleNumBox}{
+  \node[anchor=north west, overlay] (AAA) at
+  ([xshift=\TopStickerX+\TopStickerWidth+2mm, yshift=\TopStickerHeight-7pt]memoir header area.south west){\myBoldDotum {\Huge \color{cyan}\GetValue{parttitle}} \raisebox{2pt}{\myBoldDotum\large\:/\:} {\Huge \GetValue{chaptitle}\GetValue{soltag}}};
+}
+
+\newcommand{\ChapterTitleText}{
+  \node[anchor=north west, overlay] (AAA) at
+  ([xshift=\TopStickerX+\TopStickerWidth+2mm, yshift=\TopStickerHeight-7pt]memoir header area.south west){\myBoldDotum {\Huge \color{cyan}\GetValue{parttitle}} \raisebox{2pt}{\myBoldDotum\large\:/\:} {\Huge \GetValue{chaptitle}\GetValue{soltag}}};
+}
+
+
+
+\if@concept %% Start of Concept Setting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\copypagestyle{chapter}{empty} %%%% delete everything in chapterstyle
+\newcommand{\mychapter}[3][\empty]{%
+\ifx&#3&\empty%
+\chapterstyle{woPrecis}%
+\else%
+\chapterstyle{withPrecis}%
+\fi%
+\SetValue{ChapTitle}{#2}%
+\ifx#1\empty%
+\chapter{#2}%
+\else%
+\chapter[#1]{#2}%
+\fi%
+\ifx&#3&\empty%
+\else%
+\chapterprecishere{#3}%
+\fi%
+\pagestyle{overthecon}
+}%
+\makechapterstyle{withPrecis}
+{%
+	\setlength\afterchapskip{25mm}
+	\setlength\beforechapskip{0pt}
+	\setlength\midchapskip{0pt}
+	\renewcommand*\afterchapternum{}
+	\renewcommand*\chapnumfont{\normalfont}
+	\let\prechapternum\relax
+	\let\postchapternum\relax
+	\renewcommand*\printchapternum{%
+		\gdef\SavedChapterNum{\thechapter~~}%
+	}
+	\renewcommand*\printchapternonum{%
+		\gdef\SavedChapterNum{}%
+	}
+
+	\renewcommand*\chapterheadstart{%
+	}
+  \renewcommand*\printchaptertitle[1]
+ {%챕터스타일
+\begin{tikzpicture}[remember picture,overlay]
+    \ifoddpage %%% 홀수
+    \OddOriginSetting \OddDrawHeader \OddDrawCommand \OddAddPageNum
+    \else %%%짝수
+    \EvenOriginSetting \EvenDrawHeader \EvenDrawCommand \EvenAddPageNum
+    \fi%
+\end{tikzpicture}%
+}%
+}
+\makepagestyle{overthebook}
+\makeoddhead{overthebook}{%
+\begin{tikzpicture}[remember picture,overlay]
+  \filldraw[fill=cyan] (memoir stock.north west) rectangle (memoir stock.south east);
+\end{tikzpicture}
+}{}{}
+\makeevenhead{overthebook}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \filldraw[fill=cyan] (memoir stock.north west) rectangle (memoir stock.south east);
+  \end{tikzpicture}
+}{}{}
+\makeoddfoot{overthebook}{}{}{}
+\makeevenfoot{overthebook}{}{}{}
+\copypagestyle{book}{overthebook}
+
+\makepagestyle{overthepart}
+\makeoddhead{overthepart}{%
+\begin{tikzpicture}[remember picture,overlay]
+  \filldraw[fill=cyan] (memoir stock.north west) rectangle (memoir stock.south east);
+\end{tikzpicture}
+}{}{}
+\makeevenhead{overthepart}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \filldraw[fill=cyan] (memoir stock.north west) rectangle (memoir stock.south east);
+  \end{tikzpicture}
+}{}{}
+\makeoddfoot{overthepart}{}{}{}
+\makeevenfoot{overthepart}{}{}{}
+\copypagestyle{part}{overthepart}
+
+\makechapterstyle{woPrecis}
+{%
+	\setlength\afterchapskip{10mm}
+	\setlength\beforechapskip{0pt}
+	\setlength\midchapskip{0pt}
+	\renewcommand*\afterchapternum{}
+	\renewcommand*\chapnumfont{\normalfont}
+	\let\prechapternum\relax
+	\let\postchapternum\relax
+	\renewcommand*\printchapternum{%
+		\gdef\SavedChapterNum{\thechapter~~}%
+	}
+	\renewcommand*\printchapternonum{%
+		\gdef\SavedChapterNum{}%
+	}
+
+	\renewcommand*\chapterheadstart{%
+	}
+  \renewcommand*\printchaptertitle[1]
+ {%챕터스타일
+\begin{tikzpicture}[remember picture,overlay]
+    \ifoddpage %%% 홀수
+    \OddOriginSetting \OddDrawHeader \OddDrawCommand \OddAddPageNum
+    \else %%%짝수
+    \EvenOriginSetting \EvenDrawHeader \EvenDrawCommand \EvenAddPageNum
+    \fi%
+\end{tikzpicture}%
+}%
+}
+\makepagestyle{overthecon}
+\makeoddhead{overthecon}{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 홀수 페이지스타일
+\begin{tikzpicture}[remember picture,overlay]
+  \OddOriginSetting \OddDrawPageHeader \OddAddPageNum
+ \end{tikzpicture}
+}{}{}
+\makeevenhead{overthecon}{}{}{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 짝수 페이지스타일
+\begin{tikzpicture}[remember picture,overlay]
+  \EvenOriginSetting  \EvenDrawPageHeader  \EvenAddPageNum
+\end{tikzpicture}}
+\makeoddfoot{overthecon}{}{}{}
+\makeevenfoot{overthecon}{}{}{}
+
+
+
+\makepsmarks{overthecon}{%
+\createmark{chapter}{left}{shownumber}{}{\quad }
+\createmark{section}{right}{shownumber}{\@chapapp\ }{. \ }
+\createplainmark{toc}{both}{\contentsname}
+\createplainmark{lof}{both}{\listfigurename}
+\createplainmark{lot}{both}{\listtablename}
+\createplainmark{bib}{both}{\bibname}
+\createplainmark{index}{both}{\indexname}
+\createplainmark{glossary}{both}{\glossaryname}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 방주 세팅
+
+\newcommand{\mnindent}{\raggedright\noindent\settowidth{\hangindent}{\footnotesize{\themn)~}}\hangafter=1}
+\newcommand{\mnpar}[1][0]{\\\par\hspace{\dimexpr 1.3em + #1em \relax}}
+\newcommand{\mnspace}[1][0]{\hspace{\dimexpr 1.3em + #1em \relax}}
+\renewcommand{\mnspace}[1][0]{\hspace{\dimexpr \hangindent + #1em \relax}}
+\renewcommand{\mnpar}[1][0]{\mnspace[#1]}
+
+\RequirePackage{tikz,marginnote,letltxmacro,everypage}
+\newcounter{mn}% a new counter for use in margin notes
+%\newcommand{\mn}{\marginnote}
+\tcbset{before skip=0pt,after skip=0pt}
+\newtcolorbox{mnbox}
+{%title=Important Note~\thetcbcounter,
+enhanced,  
+width=\marginparwidth,
+  top=2mm,
+  bottom=2mm,
+  left=2mm,
+  right=2mm,
+  %fonttitle=\bfseries\color{white},
+  colframe=cyan!50,
+  boxrule=.5pt,
+  colback=white,
+  valign=top,
+  rounded corners,
+  frame style={drop shadow={fill=white, draw=cyan!95}},
+  label=mn
+}
+
+\def\pagesense{R}
+\AddEverypageHook{\if R\pagesense\gdef\pagesense{L}\else\gdef\pagesense{R}\fi}
+\newcommand{\mn}[2][]{%
+\if R\pagesense%
+  \refstepcounter{mn}% step counter
+  \textsuperscript{\bfseries\sffamily\color{cyan}\themn)}%
+  \marginnote{%
+    %\hspace{0.1\marginparsep}%
+    \makebox[0pt][l]{%
+ \begin{mnbox}%
+ \hangindent=-2in%
+\hangafter=1%
+\lineskiplimit=4pt%
+\lineskip=6pt%
+ \mnindent\footnotesize{\sffamily{\bfseries\color{cyan}\themn) }#2}%
+ \end{mnbox}%
+    }%
+  }[\ifblank{#1}{-3mm}{\dimexpr#1-3mm\relax}]%
+  \else
+    \refstepcounter{mn}% step counter
+    \textsuperscript{\bfseries\sffamily\color{cyan}\themn)}%
+    %\raisebox{2.5pt}{\scriptsize\myMediumDotum\color{cyan}\themn)}%
+  \marginnote[%
+{%
+  \makebox[0pt][r]{%
+\begin{mnbox}%
+  \hangindent=-2in%
+\hangafter=1%
+\lineskiplimit=4pt%
+\lineskip=6pt%
+\mnindent\footnotesize{\sffamily{\bfseries\color{cyan}\themn) }#2}%
+\end{mnbox}%
+  }%
+}]{}[\ifblank{#1}{-3mm}{\dimexpr#1-3mm\relax}]%
+\fi%
+}
+
+%index \term[상위항목]{하위항목}{0=안출력,1=상위,2=하위,3=상위 항목만 index에 반영하고, 하위 항목은 출력만 함}
+\newcommand{\term}[3][]{%
+\ifthenelse{\equal{#1}{}}
+  {\ifthenelse{\equal{#3}{0}}{}{\index{#2}\textbf{#2}}}
+  {\ifthenelse{\equal{#3}{1}}
+    {\index{#1!#2}\textbf{#1}}
+    {\ifthenelse{\equal{#3}{2}}
+      {\index{#1!#2}\textbf{#2}}
+      {\ifthenelse{\equal{#3}{3}}
+        {\index{#1}\textbf{#2}}
+        {\ifthenelse{\equal{#3}{0}}{\index{#1!#2}}{}%
+        }%
+      }%
+    }%
+  }%
+}
+
+\newcommand{\iterm}[3][]{%
+\ifthenelse{\equal{#1}{}}
+  {\ifthenelse{\equal{#3}{0}}{}{\index{#2@{\color{cyan}#2}}\textbf{\color{cyan}#2}}}
+  {\index{#1!#2}%
+  \ifthenelse{\equal{#3}{1}}
+    {\textbf{\color{cyan}#1}}
+    {\ifthenelse{\equal{#3}{2}}{\textbf{\color{cyan}#2}}{}}%
+  }%
+}
+
+%%%%%%%%% 챕터 세팅
+
+
+
+
+\newcommand{\normalsec}[1]{\raggedright\bfseries\sffamily\Large{\color{cyan}#1}}%
+%
+\def\secNumSense{X}%
+
+\setsechook{%
+  \if O\secNumSense%
+  \setsecheadstyle{\underlinedhead}%
+  \else%
+  \setsecheadstyle{\normalsec}%
+  \fi%
+    %\setsecheadstyle{\normalsec}%
+    \setsubsecheadstyle{\myMediumYoonGothic\large\color{black}}%
+    \setsubsubsecheadstyle{\sffamily\color{cyan}}%
+    \setsecnumformat{\color{black}\aeunderline{\pgfkeysvalueof{zbsa}\hspace{0.5mm}\arabic{part}.\arabic{chapter}.\arabic{section}}~}%
+  }%
+    %\setsecindent{1em}
+    %\setsubsecindent{1em}
+
+
+
+    \newcommand{\fixcolor}{\hphantom{d} \vskip -1.3\blskip}
+
+\fi%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% End Concept Setting
+
+
+
+
+
+%%%%%%%%%%%%%%%Font Setting
+
+\setmainfont{TeX Gyre Termes}
+\setsansfont{TeX Gyre Heros}
+\if@kopub
+\setmainhangulfont[Ligatures=TeX,BoldFont={KoPubBatang Bold},interhchar=-0.02em]{KoPubBatang Light}
+\setmathhangulfont[Ligatures=TeX,BoldFont={KoPubBatang Bold}]{KoPubBatang Light}
+\setsanshangulfont[Ligatures=TeX,BoldFont={KoPubDotum Bold}]{KoPubDotum Light}
+\setmainhanjafont[Ligatures=TeX,BoldFont={KoPubBatang Medium}]{KoPubBatang Light}
+\setsanshanjafont[Ligatures=TeX,BoldFont={KoPubDotum Medium}]{KoPubDotum Light}
+\newcommand{\myBoldDotum}{\hangulfontspec[Ligatures=TeX]{KoPubDotum Bold}\fontspec[Ligatures=TeX]{KoPubDotum Bold}}
+\newcommand{\myMediumDotum}{\hangulfontspec[Ligatures=TeX]{KoPubDotum Medium}\fontspec[Ligatures=TeX]{KoPubDotum Medium}}
+\newcommand{\myDinbol}{\hangulfontspec[Ligatures=TeX]{KoPubDotum Bold}\fontspec[Ligatures=TeX,LetterSpace=-5]{KoPubDotum Bold}}
+\newcommand{\myDinmed}{\hangulfontspec[Ligatures=TeX]{KoPubDotum Medium}\fontspec[Ligatures=TeX,LetterSpace=-5]{KoPubDotum Medium}}
+\newcommand{\myDinreg}{\hangulfontspec[Ligatures=TeX]{KoPubDotum Light}\fontspec[Ligatures=TeX,LetterSpace=-5]{KoPubDotum Light}}
+\newcommand{\myGujarati}{\hangulfontspec[Ligatures=TeX]{KoPubDotum Medium}\fontspec[Ligatures=TeX,LetterSpace=-5]{KoPubDotum Medium}}
+\newcommand{\myMediumYoonGothic}{\hangulfontspec[Ligatures=TeX]{KoPubDotum Medium}\fontspec[Ligatures=TeX]{KoPubDotum Medium}}
+\else
+\setmainhangulfont[Ligatures=TeX,BoldFont={Yoon 윤명조 740}]{Yoon 윤명조 720}
+\setsanshangulfont[Ligatures=TeX,BoldFont={Yoon 윤고딕 780},interhchar=-0.02em]{Yoon 윤고딕 750}
+\setmainhanjafont[Ligatures=TeX,BoldFont={Yoon 윤명조 740}]{Yoon 윤명조 720}
+\setsanshanjafont[Ligatures=TeX,BoldFont={Yoon 윤고딕 780},interhchar=-0.02em]{Yoon 윤고딕 750}
+\newcommand{\myBoldDotum}{\hangulfontspec[Ligatures=TeX]{Yoon 윤고딕 780}\fontspec[Ligatures=TeX]{Yoon 윤고딕 780}}
+\newcommand{\myMediumDotum}{\hangulfontspec[Ligatures=TeX]{Yoon 윤고딕 750}\fontspec[Ligatures=TeX]{Yoon 윤고딕 750}}
+\newcommand{\myDinbol}{\hangulfontspec[Ligatures=TeX]{Dinbol}\fontspec[Ligatures=TeX,LetterSpace=-5]{Dinbol}}
+\newcommand{\myDinmed}{\hangulfontspec[Ligatures=TeX]{Dinmed}\fontspec[Ligatures=TeX,LetterSpace=-5]{Dinmed}}
+\newcommand{\myDinreg}{\hangulfontspec[Ligatures=TeX]{Dinmed}\fontspec[Ligatures=TeX,LetterSpace=-5]{Dinreg}}
+\newcommand{\myGujarati}{\hangulfontspec[Ligatures=TeX]{Gujarati Sangam MN}\fontspec[Ligatures=TeX,LetterSpace=-5]{Gujarati Sangam MN}}
+\newcommand{\myMediumYoonGothic}{\hangulfontspec[Ligatures=TeX]{Yoon 윤고딕 760}\fontspec[Ligatures=TeX]{Yoon 윤고딕 760}}
+\fi
+\newcommand{\mySDGothic}[1][]{\hangulfontspec{Sandoll GothicNeo1Unicode #1}\fontspec{Sandoll GothicNeo1Unicode #1}}
+\newcommand{\myGyreHeros}{\hangulfontspec{TeX Gyre Heros}\fontspec{TeX Gyre Heros}}
+\newcommand{\myCentury}[1][ Bold]{\hangulfontspec{Century Gothic#1}\fontspec{Century Gothic#1}}
+\newcommand{\myKopubDotum}{\setmainfont[Ligatures=TeX,BoldFont={KoPubDotum Bold}]{KoPubDotum Light}\setmainhangulfont[Ligatures=TeX,BoldFont={KoPubDotum Bold}]{KoPubDotum Light}}
+\newcommand{\myKopubBatang}{\setmainfont[Ligatures=TeX,BoldFont={KoPubBatang Bold}]{KoPubBatang Light}\setmainhangulfont[Ligatures=TeX,BoldFont={KoPubBatang Bold}]{KoPubBatang Light}}
+\newcommand{\myJesuseng}[1][]{\hangulfontspec{Ownglyph jesuseng}\fontspec{Ownglyph jesuseng}}
+%\newcommand{\bfseries\sffamily}{\fontspec{Futura PT }}
+
+
+
+%%%%%%%%%%
+
+\makeatletter
+\newcommand\iraggedright{%
+  \let\\\@centercr\@rightskip\@flushglue \rightskip\@rightskip
+  \leftskip\z@skip}
+\makeatother
+
+\makeatletter
+\@addtoreset{part}{book}
+\makeatother
+\raggedbottomsectiontrue
+
+
+\setlength\parindent{0.8em}
+\newlength\blskip
+\setlength\blskip\baselineskip
+
+
+
+%%%%%%%%%%%% SetValue rename
+
+\def\IfEmpty#1{\pgfkeysgetvalue{#1}{\temp}\ifx\temp\empty\relax}
+\let\SetValue\pgfkeyssetvalue
+\let\GetValue\pgfkeysvalueof
+
+\newcommand{\Mmi}{최대^^b7최소}
+\newcommand\noAnswerHere{%
+  \multicolumn{1}{!{}c!{\vrule width 0pt}}{\cellcolor{white!0}}%
+}
+
+%%%%%
+
+\newcounter{examp}[chapter]
+\newenvironment{examp}{\vskip 1\blskip\refstepcounter{examp}\noindent{\color{cyan}\large\myMediumDotum{예제 \theexamp.}}}{\vskip 0.7\blskip}
+%\newenvironment{exsol}{\noindent{\color{cyan}\large\textsf{SOLUTION}}\\}{\vskip 0.7\blskip\noindent}
+
+
+\newcounter{exsol}[chapter]
+
+\newenvironment{oldexsol}[1]{%
+\vskip 1\blskip\refstepcounter{exsol}\noindent{\large\myMediumDotum{예제 \theexsol\;풀이}}\begin{justbox}#1\end{justbox}
+\par\noindent}{\vskip 0.7\blskip}
+\newenvironment{exsol}[1][1]{%
+\ifthenelse{\equal{#1}{1}}{%비어있을경우
+\vskip 1\blskip\refstepcounter{exsol}\noindent{\large\myMediumDotum{예제 \theexsol\;풀이}}\par\noindent
+}{%채워있을경우
+\vskip 1\blskip\refstepcounter{exsol}\noindent{\large\myMediumDotum{예제 \theexsol\;풀이}}\begin{justbox}#1\end{justbox}
+}}
+{\vskip 0.7\blskip}
+
+
+%%%%% 
+
+\setlength{\abovedisplayshortskip}{8pt} %plus 2pt minus 0pt%
+\setlength{\belowdisplayshortskip}{8pt}  %plus 1pt minus 1pt%
+\setlength{\abovedisplayskip}{8pt} %plus 2pt minus 0pt%
+\setlength{\belowdisplayskip}{8pt}  %plus 1pt minus 1pt%
+\lineskiplimit=7pt
+\lineskip=7pt
+
+
+\makeatletter
+\newskip\my@inparginpardisplayskip
+\my@inparginpardisplayskip=0pt plus 0pt minus 0pt
+\renewenvironment{equation*}{%
+  \mathdisplay@push
+  \st@rredtrue \global\@eqnswfalse
+  \vskip-1.6\my@inparginpardisplayskip
+  \vskip-\lineskiplimit
+  \vskip\normallineskiplimit
+  \mathdisplay{equation*}%
+}{%
+  \endmathdisplay{equation*}%
+  \mathdisplay@pop
+  \vskip-.7\my@inparginpardisplayskip
+  \ignorespacesafterend
+}
+\patchcmd\endalign{%
+  \ignorespacesafterend
+}{%
+  \vskip-\lineskiplimit
+  \vskip\normallineskiplimit
+  \noindent
+  \ignorespacesafterend
+}%
+{\typeout{successfully patched}}{\typeout{patch failed}}
+\patchcmd\@ympar{%
+  \@savemarbox\@marbox{#1}%
+}%
+{%
+  \@savemarbox\@marbox{%
+  \abovedisplayskip=.2em plus 2pt minus 2pt
+  \belowdisplayskip\abovedisplayskip
+  \my@inparginpardisplayskip=7pt plus 0pt minus 0pt
+  #1}%
+}{}{}
+\makeatother
+
+
+
+%%%%%%%% insert image command
+
+\newcommand{\includeindesign}[1]{%%%% newpage image newpage
+\newpage\phantom{abc}%
+\pagestyle{empty}%
+\begin{tikzpicture}[overlay, remember picture]
+ \node[anchor=south east, overlay]
+   at ([xshift=4.36mm, yshift=-4.36mm]memoir page.south east)
+   {\includegraphics[width=216mm, height=303mm]{#1}};
+\end{tikzpicture}%
+\newpage\phantom{abc}%
+}
+
+\newcommand{\includeoutdesign}[1]{%%%% newpage image
+\newpage\phantom{abc}%
+\pagestyle{empty}%
+\begin{tikzpicture}[overlay, remember picture]
+ \node[anchor=south east, overlay]
+   at ([xshift=4.36mm, yshift=-4.36mm]memoir page.south east)
+   {\includegraphics[width=216mm, height=303mm]{#1}};
+\end{tikzpicture}%
+}
+
+
+
+\if@concept
+\else
+
+\fi
+
+
+
+
+
+
+\newcommand{\Basic}[3][]{%
+\ifthenelse{\equal{#1}{1}}
+{%참
+\ifthenelse{\equal{#2}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Basic}\setmainfont{TeX Gyre Termes}}}
+{\ifthenelse{\equal{#3}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Basic #2)}\setmainfont{TeX Gyre Termes}}}
+{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Basic #2.#3)}\setmainfont{TeX Gyre Termes}}}%
+}%
+}%
+{%거짓
+\ifthenelse{\equal{#2}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Basic}\setmainfont{TeX Gyre Termes}}}
+{\ifthenelse{\equal{#3}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Basic #2)}\setmainfont{TeX Gyre Termes}}}
+{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{B #2.#3)}\setmainfont{TeX Gyre Termes}}}%
+}%
+}%
+}%
+
+\newcommand{\Zero}[3][]{%
+\ifthenelse{\equal{#1}{1}}
+{%참
+\ifthenelse{\equal{#2}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Zero}\setmainfont{TeX Gyre Termes}}}
+{\ifthenelse{\equal{#3}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Zero #2)}\setmainfont{TeX Gyre Termes}}}
+{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Zero #2.#3)}\setmainfont{TeX Gyre Termes}}}%
+}%
+}%
+{%거짓
+\ifthenelse{\equal{#2}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Zero}\setmainfont{TeX Gyre Termes}}}
+{\ifthenelse{\equal{#3}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Zero #2)}\setmainfont{TeX Gyre Termes}}}
+{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Z #2.#3)}\setmainfont{TeX Gyre Termes}}}%
+}%
+}%
+}%
+
+
+\newcommand{\Special}[4][]{%
+\ifthenelse{\equal{#1}{1}}
+{%참
+\ifthenelse{\equal{#2}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Special}\setmainfont{TeX Gyre Termes}}}
+{\ifthenelse{\equal{#3}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Special #2)}\setmainfont{TeX Gyre Termes}}}
+	{\ifthenelse{\equal{#4}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Special #2.#3)}\setmainfont{TeX Gyre Termes}}}
+	{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Special #2.#3.#4)}\setmainfont{TeX Gyre Termes}}}%
+	}%
+}%
+}%
+{%거짓
+\ifthenelse{\equal{#2}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Special}\setmainfont{TeX Gyre Termes}}}
+{\ifthenelse{\equal{#3}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{Special #2)}\setmainfont{TeX Gyre Termes}}}
+	{\ifthenelse{\equal{#4}{}}{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{S #2.#3)}\setmainfont{TeX Gyre Termes}}}
+	{\mbox{\setmainfont{KoPubDotum Medium}\hangulfontspec{KoPubDotum Medium}{S #2.#3.#4)}\setmainfont{TeX Gyre Termes}}}%
+	}%
+}%
+}%
+}
+
+
+\makeatletter%
+\newlength\ae@tmp@length%
+\newcommand\aeunderline[2][]{%%
+  \settowidth\ae@tmp@length{#2}%%
+  \makebox[-.5pt][l]{#2}%%
+  \hspace{0pt}%%
+  \rule[\dimexpr-0.25ex-4.4pt]{\dimexpr\ae@tmp@length+#1+.5pt\relax}{2pt}}%
+  \newcommand*{\getlength}[1]{\strip@pt#1}%
+\makeatother%
+\newcommand{\tuline}[1]{%
+    \renewcommand{\ULthickness}{2pt}%
+        \renewcommand{\ULdepth}{6pt}%
+       \uline{#1}%
+    \renewcommand{\ULthickness}{.4pt}% Resetting to ulem default
+        \renewcommand{\ULdepth}{(\dimexpr\maxdimen\relax}%
+}
+
+
+\newcommand\underlinedhead[1]{\raggedright\myBoldDotum\Large\color{cyan}\tuline{#1}}
+  
+  
+\setsecindent{0pt}%
+%\setsecheadstyle{\sffamily\bfseries\Large\color{cyan}}
+%\newcommand{\ruledsec}[1]{%
+%\raggedright\sffamily\bfseries\Large\color{cyan}#1
+%    \begin{tikzpicture}[remember picture, overlay]
+    %\draw[ultra thick,black] (0,-0.17) -- + (0.1\textwidth,0);
+%    \draw[line width=2pt,cyan] (1.3,-0.162) --  +(0.8\textwidth,0);
+%    \end{tikzpicture}
+%     }
+
+\newcommand{\ultest}[1]%
+{%
+  \ifthenelse{\equal{#1}{1}}{\tuline}{}%
+}
+%
+    %\setsecnumformat{\thesection}
+    %\setsecnumformat{\csname \thesection \endcsname :\hskip 1em}
+%
+\def\secNumSense{X}%
+
+\setsechook{%
+  \if O\secNumSense%
+  \setsecheadstyle{\underlinedhead}%
+  \else%
+  \setsecheadstyle{\normalsec}%
+  \fi%
+    %\setsecheadstyle{\normalsec}%
+    \setsubsecheadstyle{\myMediumDotum\large\color{black}}%
+    \setsubsubsecheadstyle{\myMediumDotum\color{cyan}}%
+    \setsecnumformat{\color{black}\aeunderline{\pgfkeysvalueof{zbsa}\hspace{0.5mm}\arabic{part}.\arabic{chapter}.\arabic{section}}~}%
+  }%
+    %\setsecindent{1em}
+    %\setsubsecindent{1em}
+
+
+    \setmainhangulfont{KoPubBatang}
+    \newlength{\normalparindent}
+    \AtBeginDocument{\setlength{\normalparindent}{\parindent}}
+    \tcbset{before upper={\setlength{\parindent}{\normalparindent}}}
+
+
+
+
+    %\renewcommand{}
+    %\renewcommand{\prebooknum}{}
+    %\renewcommand{\partnumfont}{\Huge\bfseries\sffamily\color{white}}
+    \renewcommand{\partnumfont}{\Huge\bfseries\sffamily\color{white}}
+    \renewcommand{\prepartnum}{\partnumfont%\parttitle
+    }
+    \renewcommand{\partnamenum}{}
+    \renewcommand{\postpartnum}{}
+    \renewcommand{\partnamenum}{}
+    \renewcommand{\printpartnum}{}
+    \renewcommand{\parttitlefont}{\Huge\bfseries\sffamily\color{white}}
+    
+    
+    
+    \renewcommand{\booknumfont}{\fontsize{80}{80}\bfseries\sffamily\color{white}}
+    \renewcommand{\printbookname}{\noindent\booknumfont\parttitle}
+    \renewcommand{\booktitlefont}{\fontsize{40}{40}\bfseries\sffamily\color{white}}
+    
+
+

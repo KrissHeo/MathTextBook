@@ -1,0 +1,514 @@
+%%%%%%%%%%%%%% intothemath : korean school flavored math %%%%%%%%%%%%%%
+
+%%%%%%% Packages
+
+
+\RequirePackage{amsmath,kstextks}
+\RequirePackage{amssymb,amsthm,mleftright,braket}
+\RequirePackage{mathtools} %%% for mathtools DeclarePairedDelimiterX
+\RequirePackage{dhucs-enumitem}
+\RequirePackage{stmaryrd} %%%%%%%% added for better-looking parallel symbol (Ver 0.2)
+\RequirePackage{tikz}
+
+\RequirePackage[most,breakable,many]{tcolorbox}
+\RequirePackage{ulem} %% for better-looking stirke
+\RequirePackage[c]{esvect} %%%%%%% for better-looking vector arrow
+\RequirePackage{tabu}
+% tabu-fix
+% to make "spread 0pt" work
+% -----------------------------
+\makeatletter
+\patchcmd
+	\tabu@startpboxmeasure
+	{\bgroup\begin{varwidth}}%
+	{\bgroup
+	 \iftabu@spread\color@begingroup\fi\begin{varwidth}}%
+	{}{}
+\def\@tabarray{\m@th\def\tabu@currentgrouptype
+    {\currentgrouptype}\@ifnextchar[\@array{\@array[c]}}
+%
+%%% \pdfelapsedtime bug 2019-12-15
+\patchcmd
+	\tabu@message@etime
+	{\the\pdfelapsedtime}%
+	{\pdfelapsedtime}%
+	{}{}
+%
+%
+\makeatother
+% -----------------------------
+ 
+
+\renewcommand{\vec}[1]{\vv{#1}}
+\let\nvec\vec
+\let\nsqrt\sqrt
+\def\vec#1{\nvec{\vphantom A\smash{#1}}} %%%% 낮추려면 vphantom t
+\def\SQRT#1{\nsqrt{\vphantom{B^2}\smash{#1}}} %%%% 낮추려면 vphantom t
+
+
+%%%%%% tilde = 물결 = anfruf in Korean
+\newcommand{\anfruf}{\textasciitilde}
+
+%%%%%%% displaystyle option
+
+\everydisplay\expandafter{\the\everydisplay\def\baselinestretch{1.1}\selectfont}
+\everymath{\displaystyle}
+
+
+\newcommand{\hcn}[1]{\hcrcircnum#1}
+\newcommand{\thcn}[1]{\text{\hcn #1}}
+\newcommand{\cthcn}[1]{ \cdots \text{\hcn#1}}
+\renewcommand{\hcn}[1]{\ifthenelse{%
+\equal{#1}{1}}{①}{}%
+\ifthenelse{%
+\equal{#1}{2}}{②}{}%
+\ifthenelse{%
+\equal{#1}{3}}{③}{}%
+\ifthenelse{%
+\equal{#1}{4}}{④}{}%
+\ifthenelse{%
+\equal{#1}{5}}{⑤}{}%
+\ifthenelse{%
+\equal{#1}{6}}{⑥}{}%
+\ifthenelse{%
+\equal{#1}{7}}{⑦}{}%
+\ifthenelse{%
+\equal{#1}{8}}{⑧}{}%
+\ifthenelse{%
+\equal{#1}{9}}{⑨}{}%
+\ifthenelse{%
+\equal{#1}{10}}{⑩}{}%
+\ifthenelse{%
+\equal{#1}{11}}{⑪}{}%
+\ifthenelse{%
+\equal{#1}{12}}{⑫}{}%
+\ifthenelse{%
+\equal{#1}{13}}{⑬}{}%
+}%⑭ ⑮ ⑯ ⑰ ⑱ ⑲ ⑳ 
+%%%%%%% Elementry & Middle school Mathematics
+\newcommand{\mrm}[1]{\mathrm{#1}}
+\renewcommand{\mit}[1]{\mathit{#1}}
+\newcommand{\ovl}[1]{\overline{#1}}
+\newcommand{\ovr}[1]{\overline{\mathrm{#1}}}
+\renewcommand{\bot}{\mkern-3mu\perp\mkern-3mu}
+\newcommand{\ppd}{\bot}
+\newcommand{\prl}{{\mkern3mu\mathrel{\raisebox{1pt}[\height][0pt]{$\sslash$}}\mkern3mu}}
+\newcommand{\plr}{\prl}
+\newcommand{\parallelsum}{\prl}
+
+\NewDocumentCommand{\qfrac}{smm}{% \qfrac for bunja(numerator)
+  \dfrac{\IfBooleanT{#1}{\vphantom{\big|}}#2}{\mathstrut #3}%
+}%\qfrac* is for bunmo(denominator), 
+%%%%  \dfrac{{\qfrac{\pi}{2}-\theta}}{{\qfrac*{\pi}{2}-\alpha}}
+\newcommand\HCIRCLE[1][1.7]{\tikz[baseline=-3.3]{\draw[thick](0,0)circle[radius=#1mm];}}%
+\newcommand{\HSQUARE}{\raisebox{-2pt}{\LARGE\color{cyan}$\square$}{}}
+%%%%%%%%% Arc symbol
+\makeatletter
+\DeclareFontFamily{U}{tipa}{}
+\DeclareFontShape{U}{tipa}{m}{n}{<->tipa10}{}
+\newcommand{\arc@char}{{\usefont{U}{tipa}{m}{n}\symbol{62}}}%
+
+\newcommand{\arc}[1]{\mathpalette\arc@arc{\mrm{#1}}}
+
+\newcommand{\arc@arc}[2]{%
+  \sbox0{$\m@th#1#2$}%
+  \vbox{
+    \hbox{\resizebox{\wd0}{\height}{\arc@char}}
+    \nointerlineskip
+    \box0
+  }%
+}
+\makeatother
+
+
+%%%%%%% High school Mathematics I
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\idp}[4]{\dfrac{#3\cdot#2+#4\cdot#1}{#3+#4}}
+\newcommand{\tidp}[4]{\tfrac{#3\cdot#2+#4\cdot#1}{#3+#4}}
+\newcommand{\edp}[4]{\dfrac{#3\cdot#2-#4\cdot#1}{#3-#4}}
+\newcommand{\tedp}[4]{\tfrac{#3\cdot#2-#4\cdot#1}{#3-#4}}
+\newcommand{\IDP}[4]{\dfrac{#3#2+#4#1}{#3+#4}}
+\newcommand{\TIDP}[4]{\tfrac{#3#2+#4#1}{#3+#4}}
+\newcommand{\EDP}[4]{\dfrac{#3#2-#4#1}{#3-#4}}
+\newcommand{\TEDP}[4]{\tfrac{#3#2-#4#1}{#3-#4}}
+
+%%%%%%% High school Mathematics II
+\renewcommand{\emptyset}{\varnothing}
+\newcommand{\midbar}{\mathrel{\Big|}}
+\newcommand{\comp}[2]{#1 \circ #2}
+\newcommand{\COMP}[3]{\left( #1 \circ #2 \right)\left(#3\right)}
+\DeclarePairedDelimiterX\cset[1]\lbrace\rbrace{\def\given{\;\delimsize\vert\;}#1} %%% set 20190117
+\newcommand{\conset}[3][]{\cset[#1]{#2 \given \text{#3}}}
+
+%%%%%%% High school Calculus
+\newcommand{\cci}[2]{\left[#1,\: #2\right]}
+\newcommand{\ooi}[2]{\left(#1,\: #2\right)}
+\newcommand{\coi}[2]{\left[#1,\: #2\right)}
+\newcommand{\oci}[2]{\left(#1,\: #2\right]}
+\newcommand{\intg}[3]{\int_{#1}^{#2}{#3}}
+\newcommand{\inti}[3]{\bigg[#1\bigg]_{#2}^{#3}}
+
+%%%%%%% High school Probability & Statistics
+\newcommand{\NPR}{\PERM}
+\newcommand{\NCR}{\COMB}
+\newcommand{\NHR}{\HOMO}
+\newcommand{\NPIR}{\PROD}
+\newcommand{\perm}[2]{{}_{#1}\mathrm{P}_{#2}}
+\newcommand{\comb}[2]{{}_{#1}\mathrm{C}_{#2}}
+\newcommand{\homo}[2]{{}_{#1}\mathrm{H}_{#2}}
+\newcommand{\PROD}[2]{{}_{#1}\Pi_{#2}} %% Modified from \prod to \PROD (ver 0.2)
+\newcommand{\PERM}[2]{{}_{#1}\mathrm{P}_{#2}} %% Added for perfect match with \PROD (ver 0.2)
+\newcommand{\COMB}[2]{{}_{#1}\mathrm{C}_{#2}} %% So was it
+\newcommand{\HOMO}[2]{{}_{#1}\mathrm{H}_{#2}} %% So was it
+\newcommand{\SNK}[2]{\mathrm{S}\left(#1,\:#2\right)}
+\newcommand{\PNK}[2]{\mathrm{P}\left(#1,\:#2\right)}
+%\renewcommand{\P}[2]{{}_{#1}\mathrm{P}_{#2}}
+%\renewcommand{\C}[2]{{}_{#1}\mathrm{C}_{#2}}
+%\renewcommand{\H}[2]{{}_{#1}\mathrm{H}_{#2}}
+
+\newcommand{\E}[1]{\mathrm{E}\left(#1\right)}
+\newcommand{\V}[1]{\mathrm{V}\left(#1\right)}
+\newcommand{\SIG}[1]{\sigma\left(#1\right)}
+\newcommand{\PR}[1]{\mathrm{P}\left(#1\right)}
+\newcommand{\ND}[2]{\mathrm{N}\left(#1,\:#2\right)}
+\newcommand{\BD}[2]{\mathrm{B}\left(#1,\:#2\right)}
+\newcommand{\pr}[1]{\mathrm{P}(#1)}
+\newcommand{\pn}[2]{\mathrm{P}(#1\cap#2)}
+\newcommand{\pu}[2]{\mathrm{P}(#1\cup#2)}
+\newcommand{\pI}[2]{\mathrm{P}(#1\,|\,#2)}
+\newcommand{\pq}[1][]{확률은 $\dfrac{q}{p}$이다. $p+q$의 값을 구하시오. \mbox{(단,} #1 \mbox{$p$와} \mbox{$q$는} 서로소인 자연수이다.)}
+
+
+%%%%%%% High school Geometry & vector
+
+\newcommand{\abv}[1]{\abvsign\vec{\mathrm{#1}}\abvsign} %%% Modified (Ver 0.4) Not Recommend
+
+\newcommand{\abvsign}[1][1pt]{\raisebox{#1}{\big|}} %%%% Added (Ver 0.4)
+
+\newcommand{\avi}[2][-1pt]{\raisebox{#1}{$\abvsign\vec{#2}\abvsign$}}
+\newcommand{\avr}[2][-1pt]{\raisebox{#1}{$\abvsign\vec{\mathrm{#2}}\abvsign$}} %%% Modified (Ver 0.4)
+\newcommand{\av}[2][-1pt]{\raisebox{#1}{$\abvsign#2\abvsign$}} %%% Modified (Ver 0.4)
+\newcommand{\vrm}[1]{\vec{\mathrm{#1}}}
+
+
+%%%%%%% Special symbols for LaTeX (Ver 0.3)
+\newcommand{\ccirc}{\mathbin{\mathchoice{\xcirc\scriptstyle}{\xcirc\scriptstyle}{\xcirc\scriptscriptstyle}{\xcirc\scriptscriptstyle}}}
+\newcommand{\xcirc}[1]{\vcenter{\hbox{$#1\circ$}}}%% for define \comp and \COMP
+\renewcommand{\comp}[2]{#1 \ccirc #2}
+\renewcommand{\COMP}[3]{\left( #1 \ccirc #2 \right)\left(#3\right)}
+\newcommand\expo[2][4pt]{\rule{0pt}{\dimexpr#1+1.4ex\relax}^{\textstyle#2}}
+\newcommand\pow[2][4pt]{\rule{0pt}{\dimexpr#1+1.4ex\relax}^{\textstyle#2}}
+\newcommand\spow[2][0pt]{\rule{0pt}{\dimexpr#1+1.4ex\relax}^{\scriptstyle#2}}
+\newcommand\expoop[2][0.725pt]{\raisebox{#1}{\scriptsize$#2$}}
+
+%%%%%%% High school Geometry & vector for LaTeX
+\makeatletter
+\newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\newcommand*\bigcdot{\mathpalette\bigcdot@{.5}}
+\newcommand*\bcd@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\newcommand*\bcd{\mathpalette\bigcdot@{.5}}
+\makeatother
+%%%%%%%% for backward-compatibility
+\newcommand{\boxsep}{\lineskiplimit=6pt
+\lineskip=6pt}
+\newcommand\sfrac[3][3pt]{\rule{0pt}{\dimexpr#1+1.4ex\relax}^\frac{#2}{#3}}
+\newcommand\upfrac[3][3pt]{\rule{0pt}{\dimexpr#1+1.4ex\relax}^{#2}}
+\newcommand{\intfrac}[5]{\int_{\tfrac{#1}{#2}}^{\tfrac{#3}{#4}}#5}
+\newcommand{\CCI}[2]{\left[#1,\: #2\right]}
+\newcommand{\OOI}[2]{\left(#1,\: #2\right)}
+\newcommand{\COI}[2]{\left[#1,\: #2\right)}
+\newcommand{\OCI}[2]{\left(#1,\: #2\right]}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%% maximun and mininum (Ver 0.4)
+\newcommand{\mdot}{^^b7}
+\newcommand{\MM}{최대\mdot최소}
+\newcommand{\tiems}{\times}
+%%%%%%%%% cartesian orderd pair (Ver 0.4)
+\newcommand{\xy}[3][]{\mathrm{#1}\left(#2,\:#3\right)}
+\newcommand{\xyz}[4][]{\mathrm{#1}\left(#2,\:#3,\:#4\right)}
+\newcommand{\xyzw}[5][]{\mathrm{#1}\left(#2,\:#3,\:#4,\:#5\right)}
+\newcommand{\cxy}{\color{cyan}\xy}
+
+\newcommand{\qedmark}{\hfill$\blacksquare$}
+
+%%%%%%%%%% blank box (ga na da)
+
+\newcommand{\fb}[1]{\framebox{\:\:#1\:\:}}
+\newcommand{\tfb}[1]{\,\text{\framebox{\:\:#1\:\:}}\,}
+
+%%%%%%%%%%%%%%%%%%%%%%
+\newlength{\answerlength}
+\newcommand{\setanswerlength}[1]{\setlength{\answerlength}{\dimexpr#1 pt\relax}}
+\newcommand{\resetanswerlength}{\setlength{\answerlength}{0pt}}
+\resetanswerlength
+\newcommand{\vsal}{\vspace{\answerlength}}
+
+
+\newlength{\bindentlength}
+\settowidth{\bindentlength}{\LARGE\textbf{\textsf{2}}}
+
+%%%%%%%%%%%%%%%%%%%%%% 수능형 답안 설정 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% 합답형 %%%%%
+\definecolor{mydarkcyan}{cmyk}{1,0,0,0.2} 
+\definecolor{mylightcyan}{cmyk}{0.5,0,0,0} 
+\newcommand{\bindent}{}
+%\renewcommand{\bindent}{}
+\newtcolorbox[]{plainthmbox}[1][]{%
+enhanced,title={\textbf{\sffamily정리}},
+rounded corners,colback={cyan!10!white},
+boxrule=0mm,left=5pt,breakable,
+attach boxed title to top left={xshift=3mm,yshift*=-3mm},
+boxed title style={size=small,colback=mydarkcyan,colframe=mydarkcyan,rounded corners,},#1
+,after={\vspace{0.5\baselineskip}\bindent}
+}
+
+\newtcolorbox[]{plainpfbox}[1][]{%
+enhanced,title={\textbf{\sffamily증명}},
+rounded corners,colback={cyan!10!white},
+boxrule=0mm,left=5pt,breakable,
+attach boxed title to top left={xshift=3mm,yshift*=-3mm},
+boxed title style={size=small,colback={cyan!65!white},colframe=mylightcyan,rounded corners,},#1
+,after={\vspace{0.5\baselineskip}\bindent}
+}
+
+
+\newtcolorbox[]{plainplainbox}[1][]{%
+enhanced,title={\textbf{\sffamily보기}},
+rounded corners,colback=white,
+boxrule=0.2mm,left=5pt,
+attach boxed title to top left={xshift=3mm,yshift*=-3mm},
+boxed title style={size=small,colback=mydarkcyan,colframe=mydarkcyan,rounded corners,},#1
+,after={\par\vspace{0.5\baselineskip}\bindent}
+}
+
+\newtcolorbox[]{plainselbox}[1][]{%
+enhanced,title={\textbf{\sffamily보기}},
+rounded corners,colback={cyan!10!white},
+boxrule=0mm,left=5pt,
+attach boxed title to top left={xshift=3mm,yshift*=-3mm},
+boxed title style={size=small,colback=mydarkcyan,colframe=mydarkcyan,rounded corners,},#1
+,after={\par\vspace{0.5\baselineskip}\bindent}
+}
+\newtcolorbox[]{plainjustbox}{%
+enhanced jigsaw,rounded corners,colback={cyan!10!white},
+boxrule=0mm,left=5pt,breakable,
+after={\vspace{0.5\baselineskip}\bindent}
+}
+
+
+\newtcolorbox[]{plainbogibox}[1][]{%
+enhanced,title={\textbf{\sffamily보기}},
+rounded corners,colback={cyan!10!white},
+boxrule=0mm,left=5pt,
+attach boxed title to top left={xshift=3mm,yshift*=-3mm},
+boxed title style={size=small,colback=mydarkcyan,colframe=mydarkcyan,rounded corners,},#1
+,after={\par\vspace{0.5\baselineskip}\bindent}
+}
+
+
+
+\newtcolorbox{plainremark}[2][]{%
+enhanced,title=#2,fonttitle=\myMediumDotum, title style={size=small,colback=mydarkcyan,colframe=mydarkcyan,rounded corners,},
+rounded corners,colback={cyan!10!white},
+boxrule=0mm,left=5pt,breakable,
+after={},
+parbox=false,#1
+}
+
+
+
+\newenvironment{selection}[2][]{\vskip 5pt
+\begin{plainselbox}[#1]%
+\raggedright%
+\begin{enumerate}[#2]\tightlist\lineskip=9pt\lineskiplimit=6pt%
+}{\end{enumerate}\end{plainselbox}}
+
+
+\newenvironment{condition}[2][]{\vskip 12pt
+\begin{plainjustbox}%
+\raggedright%
+#1%
+\begin{enumerate}[label={(\gana*)}]\tightlist\lineskip=9pt\lineskiplimit=6pt%
+}{\end{enumerate}\end{plainjustbox}}
+
+\newenvironment{justbox}{\vskip 12pt
+\begin{plainjustbox}%
+\raggedright%
+\lineskip=9pt\lineskiplimit=6pt%
+}{\end{plainjustbox}}
+
+
+\newenvironment{thmbox}{\vskip 12pt
+\begin{plainthmbox}%
+%\raggedright%
+\lineskip=9pt\lineskiplimit=6pt%
+}{\end{plainthmbox}}
+
+
+\newenvironment{pfbox}[1][6pt]{\vskip \dimexpr #1 \relax
+\begin{plainpfbox}%
+%\raggedright%
+\lineskip=9pt\lineskiplimit=6pt%
+}{ \hfill $\blacksquare$\end{plainpfbox}}
+
+
+\newenvironment{plainbox}{\vskip 12pt
+\begin{plainplainbox}%
+%\raggedright%
+\lineskip=9pt\lineskiplimit=6pt%
+}{\end{plainplainbox}}
+
+
+\newenvironment{bogibox}{\vskip 12pt
+\begin{plainbogibox}%
+%\raggedright%
+\lineskip=9pt\lineskiplimit=6pt%
+}{\end{plainbogibox}}
+
+
+
+
+\newenvironment{remark}[2][]{\vskip 12pt%
+    \begin{plainremark}[#1]{#2}%
+    %\iraggedright%
+    \lineskip=9pt\lineskiplimit=6pt%
+}{\end{plainremark}%
+}
+
+
+\newcommand{\ansone}[6][6]{\vskip 5pt%
+\setanswerlength{#1}\bindent%
+\begin{tabu}{X[1,m]X[1,m]X[1,m]X[1,m]X[1,m]}\lineskip=5pt%
+①\: $#2$ &②\: $#3$ &③\: $#4$ &④\: $#5$ &⑤\: $#6$
+\end{tabu}\resetanswerlength%
+}
+
+\newcommand{\anstwo}[6][6]{\vskip 5pt%
+\setanswerlength{#1}\bindent%
+\begin{tabu}{X[1,m] X[1,m ]X[1,m]}\lineskip=5pt%
+①\: $#2$\vsal &②\: $#3$\vsal  &③\: $#4$\vsal \\ 
+④\: $#5$ &⑤\: $#6$ &
+\end{tabu}\resetanswerlength%
+}
+
+\newcommand{\anstwot}[6][6]{%
+\anstwo[#1]{\text{#2}}{\text{#3}}{\text{#4}}{\text{#5}}{\text{#6}}%
+}
+
+
+\newcommand{\ansthree}[6][6]{\vskip 5pt%
+\setanswerlength{#1}\bindent%
+\begin{tabu}{X[1,m] X[1,m ]}\lineskip=5pt%
+①\: $#2$\vsal &②\: $#3$\vsal \\
+③\: $#4$\vsal &④\: $#5$\vsal \\
+⑤\: $#6$\vsal
+\end{tabu}\resetanswerlength%
+}
+
+\newcommand{\ansfive}[6][6]{\vskip 5pt%
+\setanswerlength{#1}
+\bindent\begin{tabu}{X[1,m]}\lineskip=5pt%
+①\: $#2$\vsal \\
+②\: $#3$\vsal \\
+③\: $#4$\vsal \\
+④\: $#5$\vsal \\
+⑤\: $#6$\vsal
+\end{tabu}%
+\resetanswerlength%
+}
+
+\newcommand{\ansfivet}[6][6]{\vskip 5pt%
+\setanswerlength{#1}
+\bindent\begin{tabu}{X[1,m]}\lineskip=5pt%
+①\: #2\vsal \\
+②\: #3\vsal \\
+③\: #4\vsal \\
+④\: #5\vsal \\
+⑤\: #6\vsal
+\end{tabu}%
+\resetanswerlength%
+}
+\RequirePackage{expl3,xparse}
+\ExplSyntaxOn
+\cs_new:Npn \answermap:n #1
+{
+ & #1
+}
+
+\NewDocumentCommand \ansgainput {m}
+{
+	\clist_set:Nn \arg_clist {#1}
+	\clist_map_function:NN \arg_clist \answermap:n
+}
+\ExplSyntaxOff
+\newcommand{\ansskip}[1][0]{\\begin{align*}\dimexpr 2pt + #1 pt \relax]}
+  \newcommand{\ansganada}[6][15]{%
+  \setanswerlength{#1}%
+  \vskip 3pt\noindent\begin{tabu}{X[2,c] X[5,c,$] X[5,c,$] X[5,c,$]}\lineskip=5pt
+    &{\text{\uline{(가)}} }& {\text{\uline{(나)}}}& {\text{\uline{(다)}}}  \\
+     ①  \ansgainput{#2} \vsal \\
+     ② \ansgainput{#3} \vsal \\
+     ③ \ansgainput{#4} \vsal \\
+     ④ \ansgainput{#5} \vsal \\
+     ⑤ \ansgainput{#6} \vsal \\
+  \end{tabu}%
+  \resetanswerlength%
+  }
+  
+  \newcommand{\ansgana}[6][0]{%
+  \setanswerlength{#1}%
+  \vskip 3pt\noindent\begin{tabu}{X[0.7, c] X[5,c,$] X[5,c,$] }\lineskip=5pt
+  &{\text{\uline{(가)}} }& {\text{\uline{(나)}}} \vsal \\
+  ① \ansgainput{#2} \vsal \\
+  ② \ansgainput{#3} \vsal \\
+  ③ \ansgainput{#4} \vsal \\
+  ④ \ansgainput{#5} \vsal \\
+  ⑤ \ansgainput{#6} \vsal \\
+  \end{tabu}%
+  \resetanswerlength%
+  }
+
+
+  \newcommand{\ansganadafrac}[6][1.6]{\bgroup\def\arraystretch{#1}\noindent\begin{tabu}{X[1,c,m] X[5,c,$] X[5,c,$] X[5,c,$]}\lineskip=10pt
+    &(가)&(나)&(다)\\[10pt]
+    ①\:\ansgainput{#2}\\
+    ②\:\ansgainput{#3}\\
+    ③\:\ansgainput{#4}\\
+    ④\:\ansgainput{#5}\\
+    ⑤\:\ansgainput{#6}\\
+    \end{tabu}\egroup}
+    
+    \newcommand{\ansganadaclfrac}[9][1.6]{\bgroup\def\arraystretch{#1}\noindent\begin{tabu}{X[1,c,m] X[#7,c,$] X[#8,c,$] X[#9,c,$]}\lineskip=10pt
+      &(가)&(나)&(다)\\[10pt]
+      ①\:\ansgainput{#2}\\
+      ②\:\ansgainput{#3}\\
+      ③\:\ansgainput{#4}\\
+      ④\:\ansgainput{#5}\\
+      ⑤\:\ansgainput{#6}\\
+      \end{tabu}\egroup}
+  
+  \newcommand{\ansganafrac}[6][1.6]{\bgroup\def\arraystretch{#1}\vskip 3pt\noindent\begin{tabu}{X[0.7] X[5,c,$] X[5,c,$] }\lineskip=10pt
+    &(가)&(나)\\[10pt]
+    ①\:\ansgainput{#2}\\
+    ②\:\ansgainput{#3}\\
+    ③\:\ansgainput{#4}\\
+    ④\:\ansgainput{#5}\\
+    ⑤\:\ansgainput{#6}\\
+    \end{tabu}\egroup}
+
+
+\newlength{\oleftskip}
+\setlength{\oleftskip}{\leftskip}
+\newcommand{\pyoindent}{\noindent\setlength{\leftskip}{1.77\bindentlength}}
+
+
+\newcommand{\gndtrue}{\hfill\mbox{\textbf{\color{cyan}(참)}}}
+\newcommand{\gndfalse}{\hfill\mbox{\textbf{\color{cyan}(거짓)}}}
+
+%\newcommand{\setDM}[3]{%
+%\abovedisplayskip \dimexpr #2pt \relax%
+%\belowdisplayskip \dimexpr #3pt \relax%
+%\begin{align*} #1 \end{align*}%
+%}
